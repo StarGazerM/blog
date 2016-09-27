@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="今天去蹭了研究生的分布式数据库原理的课·····然而发现·····这课好水啊····其实就是本科的数据库原理，根本没分布式啥事情······记得UIUC这课的课程大作业是实现一个分布式kv吧·····真是差距好大，难过。
+于是上课就一直在看阿里的那本分布式存储的书·····回顾了下之前的单机数据库的并发控制在这里简单的记一下好了">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="StarGazerMiao">
+    
+
+    <!-- Title -->
+    
+    <title>数据库并发控制 | StarGazerMiao</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>数据库并发控制</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>今天去蹭了研究生的分布式数据库原理的课·····然而发现·····这课好水啊····其实就是本科的数据库原理，根本没分布式啥事情······记得<br>UIUC这课的课程大作业是实现一个分布式kv吧·····真是差距好大，难过。</p>
+<p>于是上课就一直在看阿里的那本分布式存储的书·····回顾了下之前的单机数据库的并发控制在这里简单的记一下好了</p>
+<hr>
+<a id="more"></a>
+<h2 id="数据库锁"><a href="#数据库锁" class="headerlink" title="数据库锁"></a>数据库锁</h2><p>这里在数据库里主要是读锁和写锁吧，这个锁住的返回也和事务具体的情况有关</p>
+<ul>
+<li>在mysql中读锁是共享的，而写锁是排他的，就是说可以对一个对象加上多个读锁，但是写锁是只允许加一个的。并且同时写的事务会把读的事务给堵塞</li>
+<li>多事务并发的情况下是会出现死锁的情况的，一般的处理是设置一个事务的超时时间，然后随机回滚一个事务，或者是通过检测是否有事物间的循环依赖<br>来看是否出现了死锁。mysql中是会自动报错。<blockquote>
+<p>ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting trans</p>
+</blockquote>
+</li>
+<li>特别注意：mysql支持不同的事务隔离级别，隔离级别越高，锁的粒度越大，也就是锁的内容越多。比如：<br>考虑下面的情况，A，B客户端的事务隔离级别都是read-uncommitted, 锁的粒度是行锁。<br>步骤一、A执行start transaction，修改一条记录<br>步骤二、B执行start transaction，修改另一条记录<br>二者是不阻塞的，证明read-uncommitted 是行锁。同理，可以证明read-committed是行锁，repeatable-read和serializable是表锁。</li>
+</ul>
+<h2 id="写时复制"><a href="#写时复制" class="headerlink" title="写时复制"></a>写时复制</h2><p>因为在互联网业务中读事务的比例远大于写。所以有机智的大佬们想出了写时复制的方法来实现读操作不加锁，这样来提高读的性能。</p>
+<p>可以通过复制b+树的的执行路径上的数据</p>
+<p>大致的方法如下：</p>
+<ol>
+<li>拷贝： 把从叶子到根节点的路径拷贝出来，这里复制的不是多有数据，其实只是需要修改的那条路径而已。</li>
+<li>修改： 对复制出来的快照进行修改。</li>
+<li>提交： 其实这里的提交操作是简单的，只是移动根节点的指针而已，其他的索引完全不用变。</li>
+</ol>
+<p>书上的图很好的解释了····其实看了就懂了···有空窝画一个吧····</p>
+<hr>
+<h2 id="多版本并发（Muti-Version-Concurrency-Control）"><a href="#多版本并发（Muti-Version-Concurrency-Control）" class="headerlink" title="多版本并发（Muti-Version Concurrency Control）"></a>多版本并发（Muti-Version Concurrency Control）</h2><p>下午听翔哥貌似有提到····<br>多维护一列的更新时间和一列的删除时间<br>而在事务开始的时候给事务分配一个事务编号，这个事务编号就是当前时间节点的系统版本号，<br>复制一次当前操作行，<br>然后对比行的版本号和事务来决定是否执行（这里的执行在复制出来的副本上执行，其实就是实现了一行的多版本），这样就避免了<strong>加锁</strong>影响效率。</p>
+<p>下面主要讨论InnoDB的实现方法</p>
+<p>还是看<code>InnoDB</code>,该存储引擎下面对每一个行属性其实会多维护两个隐藏的属性列。</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th style="text-align:center">content</th>
+<th style="text-align:right">change_on</th>
+<th style="text-align:right">expire_on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align:center">right-aligned</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">51</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align:center">centered</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right"></td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align:center">are neat</td>
+<td style="text-align:right">2</td>
+</tr>
+</tbody>
+</table>
+<p>一个是列的修改时间一个是列的删除时间。这个时间只是一个版本号而已。</p>
+<p>当前的系统版本不断递增。</p>
+<p>具体操作如下：</p>
+<ol>
+<li>对于<code>select</code> 操作需要满足<ol>
+<li>行的修改版本号（change_on）要小于事务编号——–这一点保证了读取的数据都是事务开始前的数据</li>
+<li>行的删除版本好必须要大于事务的版本号，或者没有被定义——–主要是防止读到的行是被后面的事务删除</li>
+</ol>
+</li>
+<li><code>insert</code>操作时，修改change_on为当前事务的版本号</li>
+<li><code>delete</code>也只是修改了expire，也就是没有物理删除。</li>
+<li><code>update</code>InnoDB为插入一行新记录，保存当前系统版本号作为行版本号，同时保存当系统的版本号为原来的行作为删除标识。(复制当前行，修改副本的更新版本号)</li>
+</ol>
+<blockquote>
+<p>MVCC只在REPEATABLE READ和READ COMMITED两个隔离级别下工作，其它两个隔离级别和MVCC不兼容。</p>
+</blockquote>
+<p>Innodb的实现算不上MVCC，因为并没有实现核心的多版本共存，undo log中的内容只是串行化的结果，记录了多个事务的过程，不属于多版本共存。<br>但理想的MVCC是难以实现的，当事务仅修改一行记录使用理想的MVCC模式是没有问题的，可以通过比较版本号进行回滚；但当事务影响到多行数据时，理想的MVCC据无能为力了。</p>
+<p>比如，如果Transaciton1执行理想的MVCC，修改Row1成功，而修改Row2失败，此时需要回滚Row1，但因为Row1没有被锁定，其数据可能又被Transaction2所修改，如果此时回滚Row1的内容，则会破坏Transaction2的修改结果，导致Transaction2违反ACID。</p>
+<p>理想MVCC难以实现的根本原因在于企图通过乐观锁代替二段提交。修改两行数据，但为了保证其一致性，与修改两个分布式系统中的数据并无区别，<br>而二段提交是目前这种场景保证一致性的唯一手段。二段提交的本质是锁定，乐观锁的本质是消除锁定，<br>二者矛盾，故理想的MVCC难以真正在实际中被应用，Innodb只是借了MVCC这个名字，提供了读的非阻塞而已。</p>
+<p><br></p>
+<center><br><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="http://music.163.com/outchain/player?type=2&id=26101841&auto=1&height=66"></iframe><br></center>
+
+
+<p>写的有点晚了····晚安···超棒的歌www心情好点吧少年</p>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                            
+
+<a href="/tags/database/">#database</a>
+
+
+                        
+                    </div>
+                    <div class="post-date">
+                        2016 年 09 月 27 日
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+<div id="disqus_thread" class="comment"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = 'stargazermiao';
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>
