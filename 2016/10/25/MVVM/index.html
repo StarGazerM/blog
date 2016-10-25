@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="最近一直在搭这个博客顺便就学习一下前端的知识吧，确实对我来说前端这一块确实是比较弱，css，浏览器和js都非常的不熟悉。但是可能是杂七杂八的东西学多了，感觉会比较在意一些代码结构上的东西。······最近一直再坑爹的gre中，下一次碰技术真的是不知道什么时候了，简单的记一下吧。
+MVVM作为现在前端">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="StarGazerMiao">
+    
+
+    <!-- Title -->
+    
+    <title>MVVM | StarGazerMiao</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/blog/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>MVVM</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>最近一直在搭这个博客顺便就学习一下前端的知识吧，确实对我来说前端这一块确实是比较弱，css，浏览器和js都非常的不熟悉。但是可能是杂七杂八的东西学多了，感觉会比较在意一些代码结构上的东西。······最近一直再坑爹的gre中，下一次碰技术真的是不知道什么时候了，简单的记一下吧。</p>
+<p>MVVM作为现在前端设计的主要的编程模型感觉自己的理解可能一直以来都不是特别好。die</p>
+<h2 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h2><p>先说最基本的mvc吧</p>
+<p><img src="http://image.beekka.com/blog/2015/bg2015020109.png" alt="mvc"><br>(图片来源 <a href="http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html</a>)</p>
+<p>图是backbone的结构， 用户可以和view和controller交互，和controller交互其实就是用户改变了url，js通过hashchange去监听，所以实际操作中前端框架中的controller其实只是一个路由器而已。页面逻辑其实还是再view里面。实际上和之前再spring 这样的mvc框架里还是完全不一样的，spring的前端模板实用jsp的话其实业务逻辑是很少的，而且一般也都拆到后端controller里面去写了</p>
+<h2 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h2><p><img src="http://image.beekka.com/blog/2015/bg2015020109.png" alt="mvp"></p>
+<p>这里的p其实就是原来的控制器（有意思么····）</p>
+<p>这里的view层被彻底拆分到了显示部分，而且这里的显示是被动的。spring其实用thymeleaf模板的话其实前端的逻辑也基本都没有了。model 是模型没有什么好说的。应该是一个简单对象的形式。在后端的话应该是可以和持久化层进行映射的，如果需要持久化的话。不同的是彻底没有了和后台数据模型交互的可能型，也就是说原来那种在jsp页面里面直接操作java bean查询数据库啥的写法是彻底的没有了，view层的工作变的特别多了前后都得过view层。</p>
+<p>我理解mvp在前端来说的话页面的很多生成的工作彻底的交给了js，甚至是很多后台的逻辑，前后彻底的分开了，甚至是前端的数据模型也是。直接在html模板代码里面已经不能直接改一个js对象的数值了。</p>
+<p>##MVVM</p>
+<p>mvvm本质上上来说和mvp其实是一样的，数据的流通方向也是一样的。最大的区别在数据是双向绑定还是单向绑定。mvvm是双向绑定的。</p>
+<h2 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h2><p>到这里还是来总结一下自己最近用的<code>vue.js</code>吧</p>
+<p><img src="http://cn.vuejs.org/images/mvvm.png" alt="vue"></p>
+<p>从图上看vue肯定是一个mvvm的框架了，这意味着这是一个双向绑定的框架了，然而·····它其实是可以选单向还是双向的，默认单向·····（弄这么多名称有意思么）</p>
+<pre><code>&lt;!-- 这是我们的 View --&gt;
+&lt;div id=&quot;example-1&quot;&gt;
+    Hello {{ name }}!
+&lt;/div&gt;
+// 这是我们的 Model
+var exampleData = {
+    name: &apos;Vue.js&apos;
+}
+
+// 创建一个 Vue 实例或 &quot;ViewModel&quot;
+// 它连接 View 与 Model
+var exampleVM = new Vue({
+    el: &apos;#example-1&apos;,
+    data: exampleData
+})
+</code></pre><p>也就是说如果我在vm层的逻辑里面改变数据前端页面会直接刷写，而且如果前端页面的数据被其他方法改掉了的话窝的vm里面存的数据并不变。</p>
+<p>也就是说vue是个纯粹的vm和view交互的框架，它只是专注在页面的渲染上，这我还是很喜欢的，毕竟轻巧了不少。当然要搭配上vue-router和vue-loader又是好麻烦</p>
+<p>当然如果Vue只是那么简单的东西的话也是想多了，view有和react 一样的组件系统，这个还是有点复杂的······而且它是按照slot的标准写的·······（不是很懂你们前端er）说vue是框架性的东西不只是一个页面库也是这个原因。大型单页应用这两个大型就决定了它根本不是像他们传教的一样轻巧的玩意。一用起来也是<strong>全家桶！！！！</strong>，模型的状态多了之后还要考虑状态管理······不过比起react和ag2······还是值得尝试的。</p>
+<p>感觉貌似没啥干货···</p>
+<p><br></p>
+<center><br><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="http://music.163.com/outchain/player?type=2&id=22697491&auto=1&height=66"></iframe><br></center>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                            
+
+<a href="/blog/tags/frontend/">#frontend</a>
+
+
+                        
+                    </div>
+                    <div class="post-date">
+                        2016 年 10 月 25 日
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+<div id="disqus_thread" class="comment"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = 'stargazermiao';
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>
