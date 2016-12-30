@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="作死的自己选的毕业设计，其实还是很有趣的hhhhhh这样就没有什么理由不好好写代码了
+我这人真的特别喜欢作死">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="StarGazerMiao">
+    
+
+    <!-- Title -->
+    
+    <title>毕业设计 | StarGazerMiao</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/blog/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>毕业设计</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>作死的自己选的毕业设计，其实还是很有趣的hhhhhh这样就没有什么理由不好好写代码了</p>
+<p>我这人真的特别喜欢作死</p>
+<a id="more"></a>
+<h1 id="v1"><a href="#v1" class="headerlink" title="v1"></a>v1</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>系统只需要考虑支撑linux操作系统</p>
+<p>系统主要分成两部分</p>
+<ol>
+<li>客户端</li>
+<li>vps服务端</li>
+</ol>
+<p>实现类似teamview的<strong>不同局域网多台主机能够互相相互访问</strong></p>
+<h2 id="原理和实现要点"><a href="#原理和实现要点" class="headerlink" title="原理和实现要点"></a>原理和实现要点</h2><p>linux的openssh提供了反向隧道的功能，使用反向隧道，可以通过将局域网内的一台主机和公网上的服务器B建立反向连接，把一个公网主机上的端口绑定到这个反向隧道上实现主机c通过服务器b去访问内网中的主机A的功能。</p>
+<p>服务器上查看空闲的端口的实现方法可以通过查看/proc/net/tcp文件来实现，也可以通过linux命令重定向到一个临时文件，再读取的方法来实现</p>
+<p>为了不再放火墙外暴露过多的端口，在服务器端使用<strong>端口转发</strong>的方法来实现。通过一个7777端口把请求代理到后面的已经建立反向连接的端口。</p>
+<p>客户端与服务端之间的请求交互可以使用http来实现主机的注册等功能。</p>
+<p><code>12.30更新：</code>因为ssh解包和协议的问题考虑切换到访问端和服务器直接使用https来通信。</p>
+<h2 id="交互部分设计"><a href="#交互部分设计" class="headerlink" title="交互部分设计"></a>交互部分设计</h2><blockquote>
+<p>客户端</p>
+</blockquote>
+<p>实现命令行下的teamview</p>
+<ol>
+<li>linux环境</li>
+<li>-h帮助文档</li>
+<li>-l查询当前连接上的主机，显示反向的端口号和主机的名字</li>
+<li>-c根据主机名连接主机</li>
+<li>-r注册主机为待连接的主机</li>
+</ol>
+<blockquote>
+<p>服务端</p>
+</blockquote>
+<ol>
+<li>主机的注册，端口的分配（9000-9999）</li>
+<li>提供基本信息如连接上的主机</li>
+</ol>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><ul>
+<li>python/c/bash或者其他</li>
+<li>redis或者其他的数据库存放已经注册的主机和配置信息</li>
+<li>服务端和客户端http通信</li>
+</ul>
+<h1 id="v2"><a href="#v2" class="headerlink" title="v2"></a>v2</h1><h2 id="目标功能"><a href="#目标功能" class="headerlink" title="目标功能"></a>目标功能</h2><p>端口复用只用一个7777端口。避免开放过多的端口</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>c语言实现服务端尝试实用libssh和openssl来重写sshd服务来实现一个端口复用多个ssh隧道。</p>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                    </div>
+                    <div class="post-date">
+                        2016 年 12 月 30 日
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+<div id="disqus_thread" class="comment"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = 'stargazermiao';
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>
